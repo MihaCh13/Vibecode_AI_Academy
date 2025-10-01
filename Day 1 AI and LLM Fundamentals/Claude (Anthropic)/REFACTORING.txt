@@ -1,0 +1,7 @@
+ REFACTORING:  
+
+Prompt:
+Рефакторирай този legacy PHP код да следва modern best practices и design patterns: [paste code]
+
+Response:
+

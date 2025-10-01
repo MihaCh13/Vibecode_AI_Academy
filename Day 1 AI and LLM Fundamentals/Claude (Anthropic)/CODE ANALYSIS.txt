@@ -1,0 +1,235 @@
+CODE ANALYSIS:
+
+Prompt:
+"Анализирай тази Laravel codebase за security vulnerabilities, performance issues и code quality problems: [upload zip file]"
+
+Response:
+
+# Анализ на Laravel Breeze Codebase
+
+## 🔴 Security Vulnerabilities
+
+### 1. **Command Injection Risk (CRITICAL)**
+```php
+// InstallCommand.php, line ~430
+protected function runCommands($commands)
+{
+    $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
+    // ...
+}
+```
+**Проблем:** Използва `fromShellCommandline()` вместо масив от аргументи, което може да позволи command injection ако `$commands` съдържа потребителски данни.
+
+**Препоръка:**
+```php
+// По-безопасен подход
+foreach ($commands as $command) {
+    $process = new Process(explode(' ', $command), base_path());
+    $process->run();
+}
+```
+
+### 2. **Path Traversal Vulnerability**
+```php
+// InstallCommand.php, line ~453
+protected function replaceInFile($search, $replace, $path)
+{
+    file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
+}
+```
+**Проблем:** Липсва валидация на `$path` параметъра. Може да се запише извън очаквания директория.
+
+**Препоръка:**
+```php
+protected function replaceInFile($search, $replace, $path)
+{
+    $realPath = realpath($path);
+    $basePath = realpath(base_path());
+    
+    if ($realPath === false || strpos($realPath, $basePath) !== 0) {
+        throw new \RuntimeException('Invalid file path');
+    }
+    
+    file_put_contents($realPath, str_replace($search, $replace, file_get_contents($realPath)));
+}
+```
+
+### 3. **Environment Variable Injection**
+```php
+// InstallsApiStack.php, line ~61
+file_put_contents(
+    base_path('.env'),
+    preg_replace('/APP_URL=(.*)/', 'APP_URL=http://localhost:8000'.PHP_EOL.'FRONTEND_URL=http://localhost:3000', 
+    file_get_contents(base_path('.env')))
+);
+```
+**Проблем:** Директно модифициране на `.env` файла без escape-ване може да причини injection проблеми.
+
+## ⚠️ Performance Issues
+
+### 4. **Inefficient File Operations**
+```php
+// InstallCommand.php, line ~143
+$bootstrapApp = file_get_contents(base_path('bootstrap/app.php'));
+// ... множество операции ...
+file_put_contents(base_path('bootstrap/app.php'), $bootstrapApp);
+```
+**Проблем:** Файлът се чете и записва многократно в различни методи.
+
+**Препоръка:** Кеширай съдържанието и запиши веднъж в края.
+
+### 5. **Repeated JSON Decoding**
+```php
+// InstallCommand.php, line ~316, ~338, ~354
+$packages = json_decode(file_get_contents(base_path('package.json')), true);
+// Повтаря се във всеки метод
+```
+**Препоръка:** Създай helper метод за read/write на package.json.
+
+### 6. **Synchronous Package Installation**
+```php
+// InstallCommand.php, line ~247
+protected function requireComposerPackages(array $packages, $asDev = false)
+{
+    return (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
+        ->setTimeout(null)
+        ->run(function ($type, $output) {
+            $this->output->write($output);
+        }) === 0;
+}
+```
+**Проблем:** Блокиращи операции без възможност за паралелизация при множество пакети.
+
+## 🟡 Code Quality Issues
+
+### 7. **Magic Values**
+```php
+// InstallCommand.php, line ~74
+if ($this->argument('stack') === 'vue') {
+    return $this->installInertiaVueStack();
+} elseif ($this->argument('stack') === 'react') {
+    // ...
+}
+```
+**Препоръка:** Използвай константи или enum:
+```php
+const STACK_VUE = 'vue';
+const STACK_REACT = 'react';
+const STACK_API = 'api';
+// ...
+```
+
+### 8. **Дублиран Код**
+Много сходен код между `installInertiaVueStack()` и `installInertiaReactStack()`:
+```php
+// InstallsInertiaStacks.php - ~200 реда дублиран код
+```
+**Препоръка:** Извлечи общата логика в абстрактен метод.
+
+### 9. **God Class Anti-Pattern**
+`InstallCommand` класът има твърде много отговорности:
+- Package management
+- File operations
+- Middleware installation
+- Test setup
+- Frontend configuration
+
+**Препоръка:** Раздели на отделни service classes.
+
+### 10. **Липса на Type Hints**
+```php
+// InstallCommand.php, line ~133
+protected function installMiddleware($names, $group = 'web', $modifier = 'append')
+{
+    // $names може да бъде array|string според PHPDoc
+}
+```
+**Препоръка:**
+```php
+protected function installMiddleware(array|string $names, string $group = 'web', string $modifier = 'append'): void
+```
+
+### 11. **Silent Failures**
+```php
+// InstallsInertiaStacks.php, line ~121
+@unlink(resource_path('views/welcome.blade.php'));
+```
+**Проблем:** Грешките се потискат без логване.
+
+**Препоръка:**
+```php
+try {
+    unlink(resource_path('views/welcome.blade.php'));
+} catch (\Exception $e) {
+    $this->components->warn('Could not delete welcome.blade.php: ' . $e->getMessage());
+}
+```
+
+### 12. **Inconsistent Error Handling**
+```php
+// InstallCommand.php
+if (! $this->installTests()) {
+    return 1; // Понякога връща 1
+}
+
+// Други методи връщат null или нищо
+```
+
+### 13. **Hardcoded Paths**
+```php
+// Множество места
+__DIR__.'/../../stubs/default/app/Http/Controllers'
+```
+**Препоръка:** Използвай константи или config файл.
+
+### 14. **Nested Ternary Operators**
+```php
+// InstallCommand.php, line ~96
+$stubStack = match ($this->argument('stack')) {
+    'api' => 'api',
+    'livewire' => 'livewire-common',
+    'livewire-functional' => 'livewire-common',
+    default => 'default',
+};
+```
+Добре използван `match`, но в други места има сложни ternary:
+
+### 15. **Missing Validation**
+```php
+// InstallCommand.php, line ~223
+protected function hasComposerPackage($package)
+{
+    $packages = json_decode(file_get_contents(base_path('composer.json')), true);
+    // Липсва проверка дали декодирането е успешно
+}
+```
+
+**Препоръка:**
+```php
+protected function hasComposerPackage(string $package): bool
+{
+    $content = file_get_contents(base_path('composer.json'));
+    $packages = json_decode($content, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new \RuntimeException('Invalid composer.json: ' . json_last_error_msg());
+    }
+    
+    return isset($packages['require'][$package]) || isset($packages['require-dev'][$package]);
+}
+```
+
+## 📊 Обобщение
+
+| Категория | Брой проблеми | Критичност |
+|-----------|---------------|------------|
+| Security | 3 | 🔴 High |
+| Performance | 3 | 🟡 Medium |
+| Code Quality | 9 | 🟢 Low-Medium |
+
+### Приоритетни действия:
+1. ✅ Поправи command injection риска
+2. ✅ Добави path traversal защита
+3. ✅ Валидирай всички file operations
+4. ✅ Рефактори дублирания код
+5. ✅ Добави comprehensive error handling

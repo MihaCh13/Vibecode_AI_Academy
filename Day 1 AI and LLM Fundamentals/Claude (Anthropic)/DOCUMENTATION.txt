@@ -1,0 +1,540 @@
+DOCUMENTATION:
+
+Prompt:
+Създай comprehensive README.md за този PHP проект: 
+\---breeze-2.x
+    |   composer.json
+    |   LICENSE.md
+    |   README.md
+    |
+    +---src
+    |   |   BreezeServiceProvider.php
+    |   |
+    |   \---Console
+    |           InstallCommand.php
+    |           InstallsApiStack.php
+    |           InstallsBladeStack.php
+    |           InstallsInertiaStacks.php
+    |           InstallsLivewireStack.php
+    |
+    \---stubs
+        +---api
+        |   +---app
+        |   |   +---Http
+        |   |   |   +---Controllers
+        |   |   |   |   \---Auth
+        |   |   |   |           AuthenticatedSessionController.php
+        |   |   |   |           EmailVerificationNotificationController.php
+        |   |   |   |           NewPasswordController.php
+        |   |   |   |           PasswordResetLinkController.php
+        |   |   |   |           RegisteredUserController.php
+        |   |   |   |           VerifyEmailController.php
+        |   |   |   |
+        |   |   |   +---Middleware
+        |   |   |   |       EnsureEmailIsVerified.php
+        |   |   |   |
+        |   |   |   \---Requests
+        |   |   |       \---Auth
+        |   |   |               LoginRequest.php
+        |   |   |
+        |   |   \---Providers
+        |   |           AppServiceProvider.php
+        |   |
+        |   +---config
+        |   |       cors.php
+        |   |       sanctum.php
+        |   |
+        |   +---pest-tests
+        |   |   |   Pest.php
+        |   |   |
+        |   |   +---Feature
+        |   |   |   |   ExampleTest.php
+        |   |   |   |
+        |   |   |   \---Auth
+        |   |   |           AuthenticationTest.php
+        |   |   |           EmailVerificationTest.php
+        |   |   |           PasswordResetTest.php
+        |   |   |           RegistrationTest.php
+        |   |   |
+        |   |   \---Unit
+        |   |           ExampleTest.php
+        |   |
+        |   +---routes
+        |   |       api.php
+        |   |       auth.php
+        |   |       web.php
+        |   |
+        |   \---tests
+        |       \---Feature
+        |           \---Auth
+        |                   AuthenticationTest.php
+        |                   EmailVerificationTest.php
+        |                   PasswordResetTest.php
+        |                   RegistrationTest.php
+        |
+        +---default
+        |   |   postcss.config.js
+        |   |   tailwind.config.js
+        |   |   vite.config.js
+        |   |
+        |   +---app
+        |   |   +---Http
+        |   |   |   +---Controllers
+        |   |   |   |   |   ProfileController.php
+        |   |   |   |   |
+        |   |   |   |   \---Auth
+        |   |   |   |           AuthenticatedSessionController.php
+        |   |   |   |           ConfirmablePasswordController.php
+        |   |   |   |           EmailVerificationNotificationController.php
+        |   |   |   |           EmailVerificationPromptController.php
+        |   |   |   |           NewPasswordController.php
+        |   |   |   |           PasswordController.php
+        |   |   |   |           PasswordResetLinkController.php
+        |   |   |   |           RegisteredUserController.php
+        |   |   |   |           VerifyEmailController.php
+        |   |   |   |
+        |   |   |   \---Requests
+        |   |   |       |   ProfileUpdateRequest.php
+        |   |   |       |
+        |   |   |       \---Auth
+        |   |   |               LoginRequest.php
+        |   |   |
+        |   |   \---View
+        |   |       \---Components
+        |   |               AppLayout.php
+        |   |               GuestLayout.php
+        |   |
+        |   +---pest-tests
+        |   |   |   Pest.php
+        |   |   |
+        |   |   +---Feature
+        |   |   |   |   ExampleTest.php
+        |   |   |   |   ProfileTest.php
+        |   |   |   |
+        |   |   |   \---Auth
+        |   |   |           AuthenticationTest.php
+        |   |   |           EmailVerificationTest.php
+        |   |   |           PasswordConfirmationTest.php
+        |   |   |           PasswordResetTest.php
+        |   |   |           PasswordUpdateTest.php
+        |   |   |           RegistrationTest.php
+        |   |   |
+        |   |   \---Unit
+        |   |           ExampleTest.php
+        |   |
+        |   +---resources
+        |   |   +---css
+        |   |   |       app.css
+        |   |   |
+        |   |   +---js
+        |   |   |       app.js
+        |   |   |
+        |   |   \---views
+        |   |       |   dashboard.blade.php
+        |   |       |
+        |   |       +---auth
+        |   |       |       confirm-password.blade.php
+        |   |       |       forgot-password.blade.php
+        |   |       |       login.blade.php
+        |   |       |       register.blade.php
+        |   |       |       reset-password.blade.php
+        |   |       |       verify-email.blade.php
+        |   |       |
+        |   |       +---components
+        |   |       |       application-logo.blade.php
+        |   |       |       auth-session-status.blade.php
+        |   |       |       danger-button.blade.php
+        |   |       |       dropdown-link.blade.php
+        |   |       |       dropdown.blade.php
+        |   |       |       input-error.blade.php
+        |   |       |       input-label.blade.php
+        |   |       |       modal.blade.php
+        |   |       |       nav-link.blade.php
+        |   |       |       primary-button.blade.php
+        |   |       |       responsive-nav-link.blade.php
+        |   |       |       secondary-button.blade.php
+        |   |       |       text-input.blade.php
+        |   |       |
+        |   |       +---layouts
+        |   |       |       app.blade.php
+        |   |       |       guest.blade.php
+        |   |       |       navigation.blade.php
+        |   |       |
+        |   |       \---profile
+        |   |           |   edit.blade.php
+        |   |           |
+        |   |           \---partials
+        |   |                   delete-user-form.blade.php
+        |   |                   update-password-form.blade.php
+        |   |                   update-profile-information-form.blade.php
+        |   |
+        |   +---routes
+        |   |       auth.php
+        |   |       web.php
+        |   |
+        |   \---tests
+        |       \---Feature
+        |           |   ProfileTest.php
+        |           |
+        |           \---Auth
+        |                   AuthenticationTest.php
+        |                   EmailVerificationTest.php
+        |                   PasswordConfirmationTest.php
+        |                   PasswordResetTest.php
+        |                   PasswordUpdateTest.php
+        |                   RegistrationTest.php
+        |
+        +---inertia-common
+        |   |   .prettierrc
+        |   |   jsconfig.json
+        |   |   tailwind.config.js
+        |   |
+        |   +---app
+        |   |   +---Http
+        |   |   |   +---Controllers
+        |   |   |   |   |   ProfileController.php
+        |   |   |   |   |
+        |   |   |   |   \---Auth
+        |   |   |   |           AuthenticatedSessionController.php
+        |   |   |   |           ConfirmablePasswordController.php
+        |   |   |   |           EmailVerificationNotificationController.php
+        |   |   |   |           EmailVerificationPromptController.php
+        |   |   |   |           NewPasswordController.php
+        |   |   |   |           PasswordController.php
+        |   |   |   |           PasswordResetLinkController.php
+        |   |   |   |           RegisteredUserController.php
+        |   |   |   |           VerifyEmailController.php
+        |   |   |   |
+        |   |   |   \---Middleware
+        |   |   |           HandleInertiaRequests.php
+        |   |   |
+        |   |   \---Providers
+        |   |           AppServiceProvider.php
+        |   |
+        |   +---pest-tests
+        |   |   \---Feature
+        |   |       |   ProfileTest.php
+        |   |       |
+        |   |       \---Auth
+        |   |               PasswordUpdateTest.php
+        |   |
+        |   +---routes
+        |   |       auth.php
+        |   |       web.php
+        |   |
+        |   \---tests
+        |       \---Feature
+        |           |   ProfileTest.php
+        |           |
+        |           \---Auth
+        |                   PasswordUpdateTest.php
+        |
+        +---inertia-react
+        |   |   .eslintrc.json
+        |   |   vite.config.js
+        |   |
+        |   \---resources
+        |       +---js
+        |       |   |   app.jsx
+        |       |   |   ssr.jsx
+        |       |   |
+        |       |   +---Components
+        |       |   |       ApplicationLogo.jsx
+        |       |   |       Checkbox.jsx
+        |       |   |       DangerButton.jsx
+        |       |   |       Dropdown.jsx
+        |       |   |       InputError.jsx
+        |       |   |       InputLabel.jsx
+        |       |   |       Modal.jsx
+        |       |   |       NavLink.jsx
+        |       |   |       PrimaryButton.jsx
+        |       |   |       ResponsiveNavLink.jsx
+        |       |   |       SecondaryButton.jsx
+        |       |   |       TextInput.jsx
+        |       |   |
+        |       |   +---Layouts
+        |       |   |       AuthenticatedLayout.jsx
+        |       |   |       GuestLayout.jsx
+        |       |   |
+        |       |   \---Pages
+        |       |       |   Dashboard.jsx
+        |       |       |   Welcome.jsx
+        |       |       |
+        |       |       +---Auth
+        |       |       |       ConfirmPassword.jsx
+        |       |       |       ForgotPassword.jsx
+        |       |       |       Login.jsx
+        |       |       |       Register.jsx
+        |       |       |       ResetPassword.jsx
+        |       |       |       VerifyEmail.jsx
+        |       |       |
+        |       |       \---Profile
+        |       |           |   Edit.jsx
+        |       |           |
+        |       |           \---Partials
+        |       |                   DeleteUserForm.jsx
+        |       |                   UpdatePasswordForm.jsx
+        |       |                   UpdateProfileInformationForm.jsx
+        |       |
+        |       \---views
+        |               app.blade.php
+        |
+        +---inertia-react-ts
+        |   |   .eslintrc.json
+        |   |   tsconfig.json
+        |   |
+        |   \---resources
+        |       \---js
+        |           |   app.tsx
+        |           |   ssr.tsx
+        |           |
+        |           +---Components
+        |           |       ApplicationLogo.tsx
+        |           |       Checkbox.tsx
+        |           |       DangerButton.tsx
+        |           |       Dropdown.tsx
+        |           |       InputError.tsx
+        |           |       InputLabel.tsx
+        |           |       Modal.tsx
+        |           |       NavLink.tsx
+        |           |       PrimaryButton.tsx
+        |           |       ResponsiveNavLink.tsx
+        |           |       SecondaryButton.tsx
+        |           |       TextInput.tsx
+        |           |
+        |           +---Layouts
+        |           |       AuthenticatedLayout.tsx
+        |           |       GuestLayout.tsx
+        |           |
+        |           +---Pages
+        |           |   |   Dashboard.tsx
+        |           |   |   Welcome.tsx
+        |           |   |
+        |           |   +---Auth
+        |           |   |       ConfirmPassword.tsx
+        |           |   |       ForgotPassword.tsx
+        |           |   |       Login.tsx
+        |           |   |       Register.tsx
+        |           |   |       ResetPassword.tsx
+        |           |   |       VerifyEmail.tsx
+        |           |   |
+        |           |   \---Profile
+        |           |       |   Edit.tsx
+        |           |       |
+        |           |       \---Partials
+        |           |               DeleteUserForm.tsx
+        |           |               UpdatePasswordForm.tsx
+        |           |               UpdateProfileInformationForm.tsx
+        |           |
+        |           \---types
+        |                   global.d.ts
+        |                   index.d.ts
+        |                   vite-env.d.ts
+        |
+        +---inertia-vue
+        |   |   .eslintrc.cjs
+        |   |   vite.config.js
+        |   |
+        |   \---resources
+        |       +---js
+        |       |   |   app.js
+        |       |   |   ssr.js
+        |       |   |
+        |       |   +---Components
+        |       |   |       ApplicationLogo.vue
+        |       |   |       Checkbox.vue
+        |       |   |       DangerButton.vue
+        |       |   |       Dropdown.vue
+        |       |   |       DropdownLink.vue
+        |       |   |       InputError.vue
+        |       |   |       InputLabel.vue
+        |       |   |       Modal.vue
+        |       |   |       NavLink.vue
+        |       |   |       PrimaryButton.vue
+        |       |   |       ResponsiveNavLink.vue
+        |       |   |       SecondaryButton.vue
+        |       |   |       TextInput.vue
+        |       |   |
+        |       |   +---Layouts
+        |       |   |       AuthenticatedLayout.vue
+        |       |   |       GuestLayout.vue
+        |       |   |
+        |       |   \---Pages
+        |       |       |   Dashboard.vue
+        |       |       |   Welcome.vue
+        |       |       |
+        |       |       +---Auth
+        |       |       |       ConfirmPassword.vue
+        |       |       |       ForgotPassword.vue
+        |       |       |       Login.vue
+        |       |       |       Register.vue
+        |       |       |       ResetPassword.vue
+        |       |       |       VerifyEmail.vue
+        |       |       |
+        |       |       \---Profile
+        |       |           |   Edit.vue
+        |       |           |
+        |       |           \---Partials
+        |       |                   DeleteUserForm.vue
+        |       |                   UpdatePasswordForm.vue
+        |       |                   UpdateProfileInformationForm.vue
+        |       |
+        |       \---views
+        |               app.blade.php
+        |
+        +---inertia-vue-ts
+        |   |   .eslintrc.cjs
+        |   |   tsconfig.json
+        |   |
+        |   \---resources
+        |       \---js
+        |           |   app.ts
+        |           |   ssr.ts
+        |           |
+        |           +---Components
+        |           |       ApplicationLogo.vue
+        |           |       Checkbox.vue
+        |           |       DangerButton.vue
+        |           |       Dropdown.vue
+        |           |       DropdownLink.vue
+        |           |       InputError.vue
+        |           |       InputLabel.vue
+        |           |       Modal.vue
+        |           |       NavLink.vue
+        |           |       PrimaryButton.vue
+        |           |       ResponsiveNavLink.vue
+        |           |       SecondaryButton.vue
+        |           |       TextInput.vue
+        |           |
+        |           +---Layouts
+        |           |       AuthenticatedLayout.vue
+        |           |       GuestLayout.vue
+        |           |
+        |           +---Pages
+        |           |   |   Dashboard.vue
+        |           |   |   Welcome.vue
+        |           |   |
+        |           |   +---Auth
+        |           |   |       ConfirmPassword.vue
+        |           |   |       ForgotPassword.vue
+        |           |   |       Login.vue
+        |           |   |       Register.vue
+        |           |   |       ResetPassword.vue
+        |           |   |       VerifyEmail.vue
+        |           |   |
+        |           |   \---Profile
+        |           |       |   Edit.vue
+        |           |       |
+        |           |       \---Partials
+        |           |               DeleteUserForm.vue
+        |           |               UpdatePasswordForm.vue
+        |           |               UpdateProfileInformationForm.vue
+        |           |
+        |           \---types
+        |                   global.d.ts
+        |                   index.d.ts
+        |                   vite-env.d.ts
+        |
+        +---livewire
+        |   \---resources
+        |       \---views
+        |           \---livewire
+        |               +---layout
+        |               |       navigation.blade.php
+        |               |
+        |               +---pages
+        |               |   \---auth
+        |               |           confirm-password.blade.php
+        |               |           forgot-password.blade.php
+        |               |           login.blade.php
+        |               |           register.blade.php
+        |               |           reset-password.blade.php
+        |               |           verify-email.blade.php
+        |               |
+        |               +---profile
+        |               |       delete-user-form.blade.php
+        |               |       update-password-form.blade.php
+        |               |       update-profile-information-form.blade.php
+        |               |
+        |               \---welcome
+        |                       navigation.blade.php
+        |
+        +---livewire-common
+        |   +---app
+        |   |   \---Livewire
+        |   |       +---Actions
+        |   |       |       Logout.php
+        |   |       |
+        |   |       \---Forms
+        |   |               LoginForm.php
+        |   |
+        |   +---pest-tests
+        |   |   |   Pest.php
+        |   |   |
+        |   |   +---Feature
+        |   |   |   |   ExampleTest.php
+        |   |   |   |   ProfileTest.php
+        |   |   |   |
+        |   |   |   \---Auth
+        |   |   |           AuthenticationTest.php
+        |   |   |           EmailVerificationTest.php
+        |   |   |           PasswordConfirmationTest.php
+        |   |   |           PasswordResetTest.php
+        |   |   |           PasswordUpdateTest.php
+        |   |   |           RegistrationTest.php
+        |   |   |
+        |   |   \---Unit
+        |   |           ExampleTest.php
+        |   |
+        |   +---resources
+        |   |   \---views
+        |   |       |   dashboard.blade.php
+        |   |       |   profile.blade.php
+        |   |       |   welcome.blade.php
+        |   |       |
+        |   |       +---components
+        |   |       |       action-message.blade.php
+        |   |       |
+        |   |       \---layouts
+        |   |               app.blade.php
+        |   |               guest.blade.php
+        |   |
+        |   +---routes
+        |   |       auth.php
+        |   |       web.php
+        |   |
+        |   \---tests
+        |       \---Feature
+        |           |   ProfileTest.php
+        |           |
+        |           \---Auth
+        |                   AuthenticationTest.php
+        |                   EmailVerificationTest.php
+        |                   PasswordConfirmationTest.php
+        |                   PasswordResetTest.php
+        |                   PasswordUpdateTest.php
+        |                   RegistrationTest.php
+        |
+        \---livewire-functional
+            \---resources
+                \---views
+                    \---livewire
+                        +---layout
+                        |       navigation.blade.php
+                        |
+                        +---pages
+                        |   \---auth
+                        |           confirm-password.blade.php
+                        |           forgot-password.blade.php
+                        |           login.blade.php
+                        |           register.blade.php
+                        |           reset-password.blade.php
+                        |           verify-email.blade.php
+                        |
+                        +---profile
+                        |       delete-user-form.blade.php
+                        |       update-password-form.blade.php
+                        |       update-profile-information-form.blade.php
+                        |
+                        \---welcome
+                                navigation.blade.php
